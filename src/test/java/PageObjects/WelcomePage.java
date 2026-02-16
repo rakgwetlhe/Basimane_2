@@ -18,6 +18,10 @@ public class WelcomePage {
     public WelcomePage(WebDriver driver) {
         this.driver = driver;
     }
-
-
+    public void clickNavLearnDropdown() {
+        navLearnDropdownXpath.click();
+    }
+    public void clickLearningMaterialsOption() {
+        learningMaterialsOptionXpath.click();
+    }
 }

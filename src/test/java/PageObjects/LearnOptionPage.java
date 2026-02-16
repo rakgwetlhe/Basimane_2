@@ -39,5 +39,25 @@ public class LearnOptionPage {
 
     public LearnOptionPage(WebDriver driver) {
             this.driver = driver;
-        }
+    }
+    public void clickWebAutomationBasicFormTab() {
+        webAutomationBasicFormTabId.click();
+    }
+    public void verifyWelcomeHeaderMessage() {
+        welcomeHeaderId.isDisplayed(); // == Selenium Practice Form ==
+    }
+    public void fillOutPracticeForm(String fullName, String email, String age, String gender, String country, String yearsOfExperience, String comments) {
+        fullNameFieldId.sendKeys(fullName);
+        emailFieldId.sendKeys(email);
+        ageFieldId.sendKeys(age);
+        genderDropdownId.sendKeys(gender);
+        countryDropdownId.sendKeys(country);
+        yearsOfExperienceDropdownId.sendKeys(yearsOfExperience);
+        skillsLevelCheckboxXpath.click();
+        commentsFieldId.sendKeys(comments);
+        newsletterSubscriptionCheckboxId.click();
+        termsAndConditionsCheckboxId.click();
+        viewFormDataId.click();
+        submitFormButtonId.click();
+    }
 }
