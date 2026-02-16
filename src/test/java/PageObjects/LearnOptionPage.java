@@ -9,7 +9,7 @@ public class LearnOptionPage {
     WebDriver driver;
 
     @FindBy(id = "tab-btn-password")
-    WebElement webAutomationBasicFormTabId;
+    WebElement navWebAutomationBasicFormTabId;
     @FindBy(id = "page-title")
     WebElement welcomeHeaderId; // == Selenium Practice Form ==
     @FindBy(id = "name")
@@ -41,7 +41,7 @@ public class LearnOptionPage {
             this.driver = driver;
     }
     public void clickWebAutomationBasicFormTab() {
-        webAutomationBasicFormTabId.click();
+        navWebAutomationBasicFormTabId.click();
     }
     public void verifyWelcomeHeaderMessage() {
         welcomeHeaderId.isDisplayed(); // == Selenium Practice Form ==
