@@ -1,32 +1,61 @@
 package StepDefinitions;
 
+import Context.ScenarioContext;
+import PageObjects.LoginPage;
+import Services.AuthServices;
 import Utils.Base;
+import Utils.DBConnection;
+import Utils.UserRepository;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 import org.testng.Assert;
 
 public class LoginSteps extends Base {
 
-    @Given("User on the login page")
-    public void user_on_the_login_page() {
+    private AuthServices authServices;
+    private DBConnection dbConnection;
+    private UserRepository userRepository;
+    private ScenarioContext scenarioContext;
+    private LoginPage loginPage;
+
+    public  LoginSteps(DBConnection dbConnection, ScenarioContext scenarioContext) {
+        this.dbConnection = dbConnection;
+        this.scenarioContext = scenarioContext;
+        this.loginPage = new LoginPage(getDriver());
+    }
+    @Before
+    public void setUpAuthService() {
+        // Initialize AuthServices with the shared driver from Base
+        this.authServices = new AuthServices(getDriver());
+    }
+
+    @Given("the user is on the login page")
+    public void the_user_is_on_the_login_page() {
         loginPage.clickNavLoginButton();
     }
-    @When("User enters a valid username {}")
-    public void user_enters_a_valid_username(String username) {
-        loginPage.enterUsername(username);
+    @When("the user enters a valid email {string} and password {string}")
+    public void the_user_enters_a_valid_email_and_password(String ignoredEmail, String ignoredPassword) {
+        String email = scenarioContext.getEmail();
+        String password = scenarioContext.getPassword();
+        authServices.loginAs(email, password);
     }
-    @And("User enters a valid password {}")
-    public void user_enters_a_valid_password(String password) {
-        loginPage.enterPassword(password);
+
+    @When("the user logs in using stored credentials")
+    public void the_user_logs_in_using_stored_credentials() {
+        String email = scenarioContext.getEmail();
+        String password = scenarioContext.getPassword();
+        authServices.loginAs(email, password);
     }
-    @And("User clicks on the login button")
-    public void user_clicks_on_the_login_button() {
+
+    @And("clicks the login button")
+    public void clicks_the_login_button() {
         loginPage.clickLoginButton();
     }
-    @Then("User should be redirected to the dashboard")
-    public void user_should_be_redirected_to_the_dashboard() {
+    @Then("the user should be redirected to the dashboard")
+    public void the_user_should_be_redirected_to_the_dashboard() {
         String actualValue = loginPage.getLoginSuccessMessage();
-        System.out.println("Actual login success message: " + actualValue);
-        String expectedValue = "Welcome back, Cucumber! \uD83D\uDC4B";
+        System.out.println("Actual Login Success Message: " + actualValue);
+        String expectedValue = "Welcome back, ! \uD83D\uDC4B";
         Assert.assertEquals(actualValue, expectedValue, "Expected message: " + expectedValue + ", but got: " + actualValue);
     }
 }

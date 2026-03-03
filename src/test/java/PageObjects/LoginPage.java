@@ -15,7 +15,7 @@ public class LoginPage {
     @FindBy(xpath = "//div[@class='nav-user-section']")
     WebElement navLoginButtonXpath;
     @FindBy(id = "login-email")
-    WebElement usernameFieldId;
+    WebElement emailFieldId;
     @FindBy(id = "login-password")
     WebElement passwordFieldId;
     @FindBy(id = "login-submit")
@@ -30,10 +30,10 @@ public class LoginPage {
         new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOf(navLoginButtonXpath));
         navLoginButtonXpath.click();
     }
-    public void enterUsername(String username) {
-        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOf(usernameFieldId));
-        usernameFieldId.clear();
-        usernameFieldId.sendKeys(username);
+    public void enterEmailAddress(String email) {
+        new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.visibilityOf(emailFieldId));
+        emailFieldId.clear();
+        emailFieldId.sendKeys(email);
     }
     public void enterPassword(String password) {
         passwordFieldId.clear();

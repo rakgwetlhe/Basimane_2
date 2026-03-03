@@ -19,15 +19,15 @@ public class Listener implements ITestListener {
     }
     @Override
     public void onTestFailure(ITestResult result) {
-        test.log(Status.FAIL, "Test Case: " + result.getMethod().getMethodName());
+        test.log(Status.FAIL, "TestRunner Case: " + result.getMethod().getMethodName());
     }
     @Override
     public void onTestSuccess(ITestResult result) {
-        test.log(Status.PASS, "Test Case: " + result.getMethod().getMethodName());
+        test.log(Status.PASS, "TestRunner Case: " + result.getMethod().getMethodName());
     }
     @Override
     public void onTestSkipped(ITestResult result) {
-        test.log(Status.SKIP, "Test Case: " + result.getMethod().getMethodName());
+        test.log(Status.SKIP, "TestRunner Case: " + result.getMethod().getMethodName());
     }
     @Override
     public void onFinish(ITestContext context) {
