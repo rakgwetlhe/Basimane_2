@@ -5,18 +5,18 @@ import org.openqa.selenium.WebDriver;
 
 public class AuthServices {
 
-    private final LoginPage loginPage;
-    private final WebDriver driver;
+    LoginPage loginPage;
 
-    public AuthServices(WebDriver driver) {
-        this.driver = driver;
-        this.loginPage = new LoginPage(driver);
+    public AuthServices(WebDriver driver){
+
+        loginPage = new LoginPage(driver);
     }
-    public void loginAs(String email, String password) {
-        loginPage.clickNavLoginButton();
-        loginPage.enterEmailAddress(email);
+
+    public void login(String email, String password){
+
+        loginPage.clickLoginNav();
+        loginPage.enterEmail(email);
         loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        loginPage.clickLogin();
     }
-
 }

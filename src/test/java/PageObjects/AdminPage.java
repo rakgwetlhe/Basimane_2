@@ -1,67 +1,84 @@
 package PageObjects;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.*;
+import org.openqa.selenium.support.ui.*;
 
 import java.time.Duration;
 
 public class AdminPage {
 
-    @FindBy (xpath = "//div[@class='nav-dropdown-item']")
-    WebElement adminPanelButtonXpath;
-    @FindBy (xpath = "//button[contains(text(),'Approvals')]")
-    WebElement adminApprovalsButtonXpath;
-    @FindBy (xpath = "//button[contains(text(),'✓ Approve')]")
-    WebElement approveUserButtonXpath;
-    @FindBy (xpath = "//button[contains(text(),'Users')]")
-    WebElement adminUsersButtonXpath;
-    @FindBy (xpath = "//input[@placeholder='Search products']")
-    WebElement searchUserFieldXpath;
-    @FindBy (xpath = "//select[@id='userRole']/option[text()='Admin']")
-    WebElement promoteToAdminOptionXpath;
-    @FindBy (xpath = "//button[contains(text(),'← Back to Website')]")
-    WebElement backToWebsiteButtonXpath;
-    @FindBy (xpath = "//button[@class='nav-dropdown-item']")
-    WebElement logoutButtonXpath;
-
     WebDriver driver;
-    public AdminPage(WebDriver driver) {
+
+    @FindBy(xpath="//div/div/button[3]")
+    WebElement adminPanel;
+
+    @FindBy(xpath="//button[.//span[contains(text(),'Approvals')]]")
+    WebElement approvals;
+
+    @FindBy(xpath="//button[contains(text(),'Users')]")
+    WebElement users;
+
+    @FindBy(xpath="//input[@placeholder='Search products']")
+    WebElement searchUser;
+
+    @FindBy(xpath="//select[@id='userRole']")
+    WebElement roleDropdown;
+
+    @FindBy(xpath="//button[normalize-space()='🗑️']")
+    WebElement deleteButton;
+
+    @FindBy(xpath="//button[contains(text(),'Logout')]")
+    WebElement logout;
+
+    public AdminPage(WebDriver driver){
+
         this.driver = driver;
+        PageFactory.initElements(driver,this);
     }
-    public void navAdminPanelButton() {
-        adminPanelButtonXpath.click();
+
+    public void openAdminPanel(){
+
+        adminPanel.click();
     }
-    public void clickAdminApprovalsButton() {
-        adminApprovalsButtonXpath.click();
+
+    public void openApprovals(){
+
+        approvals.click();
     }
-    public void clickApproveUserButton() {
-        approveUserButtonXpath.click();
+
+    public void approveUser(String email){
+
+        WebElement approve = driver.findElement(
+                By.xpath("//tr[td[contains(text(),'"+email+"')]]//button[contains(text(),'Approve')]")
+        );
+
+        approve.click();
     }
-    public void navUsersButton() {
-        adminUsersButtonXpath.click();
+
+    public void openUsers(){
+
+        users.click();
     }
-    public void searchUserByEmail(String email) {
-        searchUserFieldXpath.clear();
-        searchUserFieldXpath.sendKeys(email);
+
+    public void searchUser(String email){
+
+        searchUser.clear();
+        searchUser.sendKeys(email);
     }
-    public void selectPromoteToAdminOption() {
-        promoteToAdminOptionXpath.click();
+
+    public void promoteToAdmin(){
+
+        roleDropdown.sendKeys("Admin");
     }
-    public void changeUserToAdminAlert() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.alertIsPresent());
+
+    public void deleteUser(){
+
+        deleteButton.click();
     }
-    public void adminConfirmationAlert() {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        wait.until(ExpectedConditions.alertIsPresent());
-    }
-    public void clickBackToWebsiteButton() {
-        backToWebsiteButtonXpath.click();
-    }
-    public void clickLogoutButton() {
-        logoutButtonXpath.click();
+
+    public void logout(){
+
+        logout.click();
     }
 }
