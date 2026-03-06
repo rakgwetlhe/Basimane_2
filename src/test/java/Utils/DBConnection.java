@@ -32,8 +32,6 @@ public class DBConnection {
 
         return null;
     }
-
-    // Fetch credentials by email - useful when you know the user's email
     public String[] getUserCredentialsByEmail(String email) {
         String query = "SELECT email, password FROM login_user WHERE email = ? LIMIT 1";
 
@@ -58,8 +56,6 @@ public class DBConnection {
         return null;
     }
 
-    // Best-effort: fetch the most recently promoted user with role 'Admin'
-    // Assumption: there's a column named 'role' in login_user that stores roles like 'Admin'.
     public String[] getLatestPromotedAdminCredentials() {
         String query = "SELECT email, password FROM login_user WHERE role = 'Admin' ORDER BY id DESC LIMIT 1";
 
@@ -82,3 +78,4 @@ public class DBConnection {
         return null;
     }
 }
+

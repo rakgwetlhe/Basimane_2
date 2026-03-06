@@ -22,7 +22,7 @@ public class AdminSteps extends Base {
     @When("the admin logs in")
     public void adminLogin(){
 
-        auth.login("admin@gmail.com","Admin@123");
+        auth.login("admin@gmail.com","@12345678");
     }
 
     @And("the admin navigates to the admin panel")

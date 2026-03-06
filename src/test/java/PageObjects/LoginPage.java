@@ -34,9 +34,8 @@ public class LoginPage {
 
     public void clickLoginNav() {
 
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOf(navLoginButton))
-                .click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.elementToBeClickable(navLoginButton)).click();
     }
 
     public void enterEmail(String email) {

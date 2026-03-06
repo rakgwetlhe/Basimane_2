@@ -2,12 +2,26 @@ package Utils;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.safari.SafariDriver;
 
 public class BrowserFactory {
 
-    public WebDriver startBrowser(String url) {
+    WebDriver driver = null;
 
-        WebDriver driver = new ChromeDriver();
+    public WebDriver startBrowser(String browserName, String url) {
+        if (browserName.equalsIgnoreCase("chrome")) {
+            driver = new ChromeDriver();
+        } else if (browserName.equalsIgnoreCase("firefox")) {
+            driver = new FirefoxDriver();
+        } else if (browserName.equalsIgnoreCase("edge")) {
+            driver = new EdgeDriver();
+        } else if (browserName.equalsIgnoreCase("safari")) {
+            driver = new SafariDriver();
+        } else {
+            throw new IllegalArgumentException("Unsupported browser: " + browserName);
+        }
         driver.manage().window().maximize();
         driver.get(url);
 

@@ -4,8 +4,6 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.*;
 import org.openqa.selenium.support.ui.*;
 
-import java.time.Duration;
-
 public class AdminPage {
 
     WebDriver driver;
@@ -13,7 +11,7 @@ public class AdminPage {
     @FindBy(xpath="//div/div/button[3]")
     WebElement adminPanel;
 
-    @FindBy(xpath="//button[.//span[contains(text(),'Approvals')]]")
+    @FindBy(xpath="//button[contains(normalize-space(),'Approvals')]")
     WebElement approvals;
 
     @FindBy(xpath="//button[contains(text(),'Users')]")
