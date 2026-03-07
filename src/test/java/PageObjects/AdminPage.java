@@ -10,7 +10,10 @@ public class AdminPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    @FindBy(xpath = "//div[@class='nav-dropdown-item']")
+    @FindBy(xpath = "//span[normalize-space()='admin']")
+    private WebElement adminButton;
+
+    @FindBy(xpath = "//a[contains(text(),'Admin Panel')]")
     private WebElement adminPanelButton;
 
     @FindBy(xpath = "//button[contains(text(),'Approvals')]")
@@ -40,9 +43,12 @@ public class AdminPage {
     public AdminPage(WebDriver driver) {
         this.driver = driver;
         this.wait   = new WebDriverWait(driver, Duration.ofSeconds(10));
-        PageFactory.initElements(driver, this); // FIX: was missing — all @FindBy fields were null
+        PageFactory.initElements(driver, this);
     }
 
+    public void navAdminButton() {
+        wait.until(ExpectedConditions.elementToBeClickable(adminButton)).click();
+    }
     public void navAdminPanelButton() {
         wait.until(ExpectedConditions.elementToBeClickable(adminPanelButton)).click();
     }
@@ -69,18 +75,11 @@ public class AdminPage {
         wait.until(ExpectedConditions.elementToBeClickable(promoteToAdminOption)).click();
     }
 
-    /**
-     * FIX: Previously only waited — alert was never accepted so it blocked all further actions.
-     * Now accepts the "promote to admin" confirmation alert.
-     */
     public void acceptPromoteToAdminAlert() {
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         alert.accept();
     }
 
-    /**
-     * FIX: Same as above — accepts the admin confirmation alert.
-     */
     public void acceptAdminConfirmationAlert() {
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         alert.accept();
@@ -94,12 +93,10 @@ public class AdminPage {
         wait.until(ExpectedConditions.elementToBeClickable(logoutButton)).click();
     }
 
-    /** FIX: Renamed from DeleteUserButton() to follow Java camelCase convention. */
     public void clickDeleteUserButton() {
         wait.until(ExpectedConditions.elementToBeClickable(deleteUserButton)).click();
     }
 
-    /** Accepts the deletion confirmation alert. */
     public void acceptDeletionConfirmationAlert() {
         Alert alert = wait.until(ExpectedConditions.alertIsPresent());
         alert.accept();

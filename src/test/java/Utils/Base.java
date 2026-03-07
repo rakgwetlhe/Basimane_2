@@ -8,50 +8,59 @@ import org.openqa.selenium.support.PageFactory;
 
 public class Base {
 
-    /** ThreadLocal ensures parallel-safe driver access. */
-    private static final ThreadLocal<WebDriver> driverHolder = new ThreadLocal<>();
+    private static final ThreadLocal<WebDriver>    driverHolder       = new ThreadLocal<>();
+    private static final ThreadLocal<LoginPage>    loginPageHolder    = new ThreadLocal<>();
+    private static final ThreadLocal<RegisterPage> registerPageHolder = new ThreadLocal<>();
+    private static final ThreadLocal<AdminPage>    adminPageHolder    = new ThreadLocal<>();
 
-    /** Initialised page objects — created once the driver is ready. */
-    private static LoginPage    loginPageInstance;
-    private static RegisterPage registerPageInstance;
-    private static AdminPage    adminPageInstance;
-
-    /** Initialises the browser. */
+    /**
+     * Starts the browser and creates all page objects.
+     * Called from the global @Before hook.
+     * Always creates a fresh driver — clears any stale session first.
+     */
     public static void initDriver(String browser, String url) {
-        if (driverHolder.get() == null) {
-            WebDriver driver = new BrowserFactory().startBrowser(browser, url);
-            driverHolder.set(driver);
-            loginPageInstance    = PageFactory.initElements(driver, LoginPage.class);
-            registerPageInstance = PageFactory.initElements(driver, RegisterPage.class);
-            adminPageInstance    = PageFactory.initElements(driver, AdminPage.class);
-        }
+        // Always quit any existing driver first to prevent stale session reuse
+        quitDriver();
+
+        WebDriver driver = new BrowserFactory().startBrowser(browser, url);
+        driverHolder.set(driver);
+        loginPageHolder.set(new LoginPage(driver));
+        registerPageHolder.set(new RegisterPage(driver));
+        adminPageHolder.set(new AdminPage(driver));
     }
 
-    /** Returns the shared driver for this thread. */
+    /** Returns the shared WebDriver for this thread. */
     public static WebDriver getDriver() {
         return driverHolder.get();
     }
 
-    /** Quits the browser and clears the ThreadLocal. Call from your global @After hook. */
+    /** Quits the browser and clears all ThreadLocals. Called from global @After hook. */
     public static void quitDriver() {
         WebDriver driver = driverHolder.get();
         if (driver != null) {
-            driver.quit();
-            driverHolder.remove();
+            try {
+                driver.quit();
+            } catch (Exception ignored) {
+                // Already closed — that's fine, just clear the references
+            }
         }
+        driverHolder.remove();
+        loginPageHolder.remove();
+        registerPageHolder.remove();
+        adminPageHolder.remove();
     }
 
-    // ── Page object accessors ────────────────────────────────────────────────
+    // ── Page object accessors (call inside step methods, never in constructors) ──
 
-    public LoginPage getLoginPage() {
-        return loginPageInstance;
+    public static LoginPage loginPage() {
+        return loginPageHolder.get();
     }
 
-    public RegisterPage getRegisterPage() {
-        return registerPageInstance;
+    public static RegisterPage registerPage() {
+        return registerPageHolder.get();
     }
 
-    public AdminPage getAdminPage() {
-        return adminPageInstance;
+    public static AdminPage adminPage() {
+        return adminPageHolder.get();
     }
 }

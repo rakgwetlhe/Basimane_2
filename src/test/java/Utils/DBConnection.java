@@ -4,31 +4,30 @@ import java.sql.*;
 
 public class DBConnection {
 
-    private final String dbUrl = "jdbc:mysql://102.222.124.22:3306/ndosian6b8b7_teaching";
-    private final String dbUsername = "ndosian6b8b7_teaching";
-    private final String dbPassword = "^{SF0a=#~[~p)@l1";
+    private Connection openConnection() throws SQLException {
+        return DriverManager.getConnection(
+                DBConfig.URL,
+                DBConfig.USERNAME,
+                DBConfig.PASSWORD
+        );
+    }
 
     /** Retrieves credentials for a user by their numeric ID. */
     public UserRepository getUserCredentials(int userId) {
         String query = "SELECT email, password FROM login_user WHERE id = ?";
 
-        try (Connection connect = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        try (Connection connect = openConnection();
              PreparedStatement statement = connect.prepareStatement(query)) {
 
             statement.setInt(1, userId);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return new UserRepository(
-                        resultSet.getString("email"),
-                        resultSet.getString("password")
-                );
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return new UserRepository(rs.getString("email"), rs.getString("password"));
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("Database connection failed: " + e.getMessage());
         }
-
         return null;
     }
 
@@ -36,47 +35,43 @@ public class DBConnection {
     public UserRepository getUserCredentialsByEmail(String email) {
         String query = "SELECT email, password FROM login_user WHERE email = ? LIMIT 1";
 
-        try (Connection connect = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
+        try (Connection connect = openConnection();
              PreparedStatement statement = connect.prepareStatement(query)) {
 
             statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return new UserRepository(
-                        resultSet.getString("email"),
-                        resultSet.getString("password")
-                );
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return new UserRepository(rs.getString("email"), rs.getString("password"));
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("Database connection failed: " + e.getMessage());
         }
-
         return null;
     }
 
-    /** Fetches credentials for the most recently promoted Admin user. */
-    public UserRepository getLatestPromotedAdminCredentials() {
-        String query = "SELECT email, password FROM login_user WHERE role = 'Admin' ORDER BY id DESC LIMIT 1";
+    /**
+     * FIX: login_user has no role column — role is managed by the application layer.
+     * The promoted admin is identified by email stored in ScenarioContext during the
+     * registration + promotion scenario that ran before this one.
+     * This method now fetches by the email stored in ScenarioContext (passed in as param),
+     * falling back to DBConfig.ADMIN_EMAIL if none is available.
+     */
+    public UserRepository getLatestPromotedAdminCredentials(String promotedEmail) {
+        String emailToUse = (promotedEmail != null && !promotedEmail.isEmpty())
+                ? promotedEmail
+                : DBConfig.ADMIN_EMAIL;
 
-        try (Connection connect = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
-             PreparedStatement statement = connect.prepareStatement(query)) {
+        System.out.println("[DBConnection] Fetching promoted admin by email: " + emailToUse);
+        return getUserCredentialsByEmail(emailToUse);
+    }
 
-            ResultSet resultSet = statement.executeQuery();
-
-            if (resultSet.next()) {
-                return new UserRepository(
-                        resultSet.getString("email"),
-                        resultSet.getString("password")
-                );
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("Database connection failed: " + e.getMessage());
-        }
-
-        return null;
+    /**
+     * Fetches the pre-existing admin account by email (DBConfig.ADMIN_EMAIL).
+     * Used by Scenario 2 to log in as admin and approve the new user.
+     */
+    public UserRepository getAdminCredentials() {
+        System.out.println("[DBConnection] Fetching admin credentials for: " + DBConfig.ADMIN_EMAIL);
+        return getUserCredentialsByEmail(DBConfig.ADMIN_EMAIL);
     }
 }
-

@@ -20,14 +20,19 @@ public class PromotedUserSteps {
 
     @Given("a user has been promoted to Admin")
     public void a_user_has_been_promoted_to_Admin() {
-        UserRepository promotedAdmin = dbConnection.getLatestPromotedAdminCredentials();
+        // Pass the email stored during the promotion scenario so DBConnection
+        // can look up the full credentials without needing a role column.
+        String promotedEmail = scenarioContext.getEmail();
+        UserRepository promotedAdmin = dbConnection.getLatestPromotedAdminCredentials(promotedEmail);
+
         if (promotedAdmin != null) {
-            scenarioContext.setCurrentUser(promotedAdmin); // single clean call
-            System.out.println("Loaded promoted admin from DB: " + promotedAdmin);
+            scenarioContext.setCurrentUser(promotedAdmin);
+            System.out.println("[PromotedUserSteps] Loaded promoted admin: " + promotedAdmin);
         } else {
-            // Fall back to whatever was already stored in context from the
-            // registration + promotion scenario that ran immediately before this one.
-            System.out.println("No promoted admin found in DB — using credentials from ScenarioContext.");
+            throw new IllegalStateException(
+                    "Could not load promoted admin credentials for email: " + promotedEmail +
+                            ". Ensure the user was registered and promoted in the previous scenario."
+            );
         }
     }
 }

@@ -6,6 +6,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.safari.SafariDriver;
 
+import java.time.Duration;
+
 public class BrowserFactory {
 
     public WebDriver startBrowser(String browserName, String url) {
@@ -22,6 +24,8 @@ public class BrowserFactory {
         }
 
         driver.manage().window().maximize();
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(30));
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
         driver.get(url);
         return driver;
     }

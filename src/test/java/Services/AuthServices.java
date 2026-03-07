@@ -1,20 +1,15 @@
 package Services;
 
 import PageObjects.LoginPage;
+import Utils.Base;
 import org.openqa.selenium.WebDriver;
 
 public class AuthServices {
 
-    private final LoginPage loginPage;
-
-    public AuthServices(WebDriver driver) {
-        this.loginPage = new LoginPage(driver);
-    }
-
     public void loginAs(String email, String password) {
-        loginPage.clickNavLoginButton();
-        loginPage.enterEmailAddress(email);
-        loginPage.enterPassword(password);
-        loginPage.clickLoginButton();
+        Base.loginPage().clickNavLoginButton();
+        Base.loginPage().enterEmailAddress(email);
+        Base.loginPage().enterPassword(password);
+        Base.loginPage().clickLoginButton();
     }
 }
