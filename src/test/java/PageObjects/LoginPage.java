@@ -9,56 +9,52 @@ import java.time.Duration;
 
 public class LoginPage {
 
-    WebDriver driver;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
     @FindBy(xpath = "//div[@class='nav-user-section']")
-    WebElement navLoginButton;
+    private WebElement navLoginButton;
 
     @FindBy(id = "login-email")
-    WebElement emailField;
+    private WebElement emailField;
 
     @FindBy(id = "login-password")
-    WebElement passwordField;
+    private WebElement passwordField;
 
     @FindBy(id = "login-submit")
-    WebElement loginButton;
+    private WebElement loginButton;
 
-    @FindBy(xpath = "//h2[contains(text(),'Welcome back')]")
-    WebElement loginMessage;
+    @FindBy(xpath = "//h2[contains(text(),'Welcome back, ')]")
+    private WebElement loginSuccessMessage;
 
     public LoginPage(WebDriver driver) {
-
         this.driver = driver;
+        this.wait   = new WebDriverWait(driver, Duration.ofSeconds(10));
         PageFactory.initElements(driver, this);
     }
 
-    public void clickLoginNav() {
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+    public void clickNavLoginButton() {
         wait.until(ExpectedConditions.elementToBeClickable(navLoginButton)).click();
     }
 
-    public void enterEmail(String email) {
-
+    public void enterEmailAddress(String email) {
+        wait.until(ExpectedConditions.visibilityOf(emailField));
         emailField.clear();
         emailField.sendKeys(email);
     }
 
     public void enterPassword(String password) {
-
+        wait.until(ExpectedConditions.visibilityOf(passwordField));
         passwordField.clear();
         passwordField.sendKeys(password);
     }
 
-    public void clickLogin() {
-
+    public void clickLoginButton() {
         loginButton.click();
     }
 
-    public String getLoginMessage() {
-
-        return new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOf(loginMessage))
-                .getText();
+    public String getLoginSuccessMessage() {
+        wait.until(ExpectedConditions.visibilityOf(loginSuccessMessage));
+        return loginSuccessMessage.getText();
     }
 }

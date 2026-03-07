@@ -8,22 +8,21 @@ public class DBConnection {
     private final String dbUsername = "ndosian6b8b7_teaching";
     private final String dbPassword = "^{SF0a=#~[~p)@l1";
 
-    public String[] getUserCredentials(int userId) {
-
+    /** Retrieves credentials for a user by their numeric ID. */
+    public UserRepository getUserCredentials(int userId) {
         String query = "SELECT email, password FROM login_user WHERE id = ?";
 
         try (Connection connect = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement statement = connect.prepareStatement(query)) {
 
             statement.setInt(1, userId);
-
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-
-                return new String[]{email, password};
+                return new UserRepository(
+                        resultSet.getString("email"),
+                        resultSet.getString("password")
+                );
             }
 
         } catch (SQLException e) {
@@ -32,21 +31,22 @@ public class DBConnection {
 
         return null;
     }
-    public String[] getUserCredentialsByEmail(String email) {
+
+    /** Retrieves credentials for a user by their email address. */
+    public UserRepository getUserCredentialsByEmail(String email) {
         String query = "SELECT email, password FROM login_user WHERE email = ? LIMIT 1";
 
         try (Connection connect = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
              PreparedStatement statement = connect.prepareStatement(query)) {
 
             statement.setString(1, email);
-
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String foundEmail = resultSet.getString("email");
-                String password = resultSet.getString("password");
-
-                return new String[]{foundEmail, password};
+                return new UserRepository(
+                        resultSet.getString("email"),
+                        resultSet.getString("password")
+                );
             }
 
         } catch (SQLException e) {
@@ -56,7 +56,8 @@ public class DBConnection {
         return null;
     }
 
-    public String[] getLatestPromotedAdminCredentials() {
+    /** Fetches credentials for the most recently promoted Admin user. */
+    public UserRepository getLatestPromotedAdminCredentials() {
         String query = "SELECT email, password FROM login_user WHERE role = 'Admin' ORDER BY id DESC LIMIT 1";
 
         try (Connection connect = DriverManager.getConnection(dbUrl, dbUsername, dbPassword);
@@ -65,10 +66,10 @@ public class DBConnection {
             ResultSet resultSet = statement.executeQuery();
 
             if (resultSet.next()) {
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-
-                return new String[]{email, password};
+                return new UserRepository(
+                        resultSet.getString("email"),
+                        resultSet.getString("password")
+                );
             }
 
         } catch (SQLException e) {

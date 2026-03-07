@@ -1,5 +1,6 @@
 package PageObjects;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.*;
@@ -9,86 +10,85 @@ import java.time.Duration;
 
 public class RegisterPage {
 
-    WebDriver driver;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
 
-    @FindBy(id="signup-toggle")
-    WebElement signUpButton;
+    @FindBy(id = "signup-toggle")
+    private WebElement signUpHereButton;
 
-    @FindBy(id="register-firstName")
-    WebElement firstName;
+    @FindBy(id = "register-firstName")
+    private WebElement firstNameField;
 
-    @FindBy(id="register-lastName")
-    WebElement lastName;
+    @FindBy(id = "register-lastName")
+    private WebElement lastNameField;
 
-    @FindBy(id="register-email")
-    WebElement email;
+    @FindBy(id = "register-email")
+    private WebElement emailField;
 
-    @FindBy(id="register-password")
-    WebElement password;
+    @FindBy(id = "register-password")
+    private WebElement passwordField;
 
-    @FindBy(id="register-confirmPassword")
-    WebElement confirmPassword;
+    @FindBy(id = "register-confirmPassword")
+    private WebElement confirmPasswordField;
 
-    @FindBy(id="register-group")
-    WebElement group;
+    @FindBy(id = "register-group")
+    private WebElement groupDropdown;
 
-    @FindBy(id="register-submit")
-    WebElement createAccount;
+    @FindBy(id = "register-submit")
+    private WebElement createAccountButton;
 
-    public RegisterPage(WebDriver driver){
-
+    public RegisterPage(WebDriver driver) {
         this.driver = driver;
-        PageFactory.initElements(driver,this);
+        this.wait   = new WebDriverWait(driver, Duration.ofSeconds(10));
+        PageFactory.initElements(driver, this);
     }
 
-    public void clickSignUp(){
-
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.visibilityOf(signUpButton))
-                .click();
+    public void clickSignUpHereButton() {
+        wait.until(ExpectedConditions.elementToBeClickable(signUpHereButton)).click();
     }
 
-    public void enterFirstName(String value){
-
-        firstName.sendKeys(value);
+    public void enterFirstName(String firstName) {
+        wait.until(ExpectedConditions.visibilityOf(firstNameField));
+        firstNameField.clear();
+        firstNameField.sendKeys(firstName);
     }
 
-    public void enterLastName(String value){
-
-        lastName.sendKeys(value);
+    public void enterLastName(String lastName) {
+        lastNameField.clear();
+        lastNameField.sendKeys(lastName);
     }
 
-    public void enterEmail(String value){
-
-        email.sendKeys(value);
+    public void enterRegistrationEmail(String email) {
+        emailField.clear();
+        emailField.sendKeys(email);
     }
 
-    public void enterPassword(String value){
-
-        password.sendKeys(value);
+    public void enterPasscode(String passcode) {
+        passwordField.clear();
+        passwordField.sendKeys(passcode);
     }
 
-    public void confirmPassword(String value){
-
-        confirmPassword.sendKeys(value);
+    public void enterConfirmPasscode(String passcode) {
+        confirmPasswordField.clear();
+        confirmPasswordField.sendKeys(passcode);
     }
 
-    public void selectGroup(String value){
-
-        group.sendKeys(value);
+    public void selectGroup(String group) {
+        groupDropdown.sendKeys(group);
     }
 
-    public void clickCreateAccount(){
-
-        createAccount.click();
+    public void clickCreateAccountButton() {
+        createAccountButton.click();
     }
 
-    public String getSuccessAlert(){
-
-        new WebDriverWait(driver, Duration.ofSeconds(10))
-                .until(ExpectedConditions.alertIsPresent())
-                .accept();
-
-        return "Registration submitted successfully. Your account is pending admin approval.";
+    /**
+     * FIX: Reads the actual alert text from the browser instead of returning a
+     * hardcoded string. This ensures the test catches real UI regressions.
+     */
+    public String getSignUpSuccessMessage() {
+        Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+        String message = alert.getText();
+        alert.accept();
+        return message;
     }
 }
